@@ -30,8 +30,8 @@ public class WebSecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/", "/registration", "/images/**").permitAll()
-                        .requestMatchers("/create_product", "/edit_product", "/delete_product", "/edit_user", "/delete_user", "/users").hasRole("ADMIN")
+                        .requestMatchers("/", "/registration").permitAll()
+                        .requestMatchers("/edit_user", "/delete_user", "/users").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .formLogin(formLogin -> formLogin
                         .loginPage("/login")

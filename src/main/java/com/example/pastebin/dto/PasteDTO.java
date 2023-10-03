@@ -10,7 +10,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class PasteDTO {
+    private Long id;
     private String title;
     private String text;
     private String author;
+    private int hash;
 }

@@ -11,7 +11,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -38,7 +37,7 @@ public class UserService {
                 .username(username)
                 .password(passwordEncoder.encode(userDTO.getPassword()))
                 .email(userDTO.getEmail())
-                .roles(new HashSet<>(Role.USER.ordinal()))
+                .roles(new HashSet<>(Role.ADMIN.ordinal()))
                 .build();
 
         log.info("Saving new User with username : {}", username);

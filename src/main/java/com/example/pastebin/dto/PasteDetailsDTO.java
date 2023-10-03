@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class PasteDetailsDTO {
-    private BlobId url;
+    private Long id;
+    private BlobId blobId;
     private String bucket;
+    private int hash;
 }

@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PasteDetailsRepository extends JpaRepository<PasteDetails, Long> {
+    PasteDetails findByHash(int hash);
 }
