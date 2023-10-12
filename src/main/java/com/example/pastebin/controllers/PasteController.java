@@ -20,15 +20,17 @@ public class PasteController {
     }
 
     @GetMapping("/pastes")
-    public String allPastes(Model model) {
+    public String allPastes(Model model, Principal principal) {
         model.addAttribute("pastes", pasteService.findAll());
+        model.addAttribute("user", principal.getName());
         return "pastes";
     }
 
     @GetMapping("/pastes/{hash}")
-    public String morePasteInfo(@PathVariable int hash, Model model) {
+    public String morePasteInfo(@PathVariable int hash, Model model, Principal principal) {
         model.addAttribute("paste", pasteService.findPasteByHash(hash));
         model.addAttribute("paste_hash", hash);
+        model.addAttribute("user", principal.getName());
         return "paste_info";
     }
 

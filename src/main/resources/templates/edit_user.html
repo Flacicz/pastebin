@@ -17,24 +17,27 @@
 <header th:insert="~{components/header :: header}"></header>
 
 <div class="container">
-    <h1>Редактирование информации о пользователе</h1>
+    <h1>Edit user</h1>
     <div>
         <form method="post" th:action="@{/edit_user/{id}(id=${id})}" th:object="${user}">
             <div class="form-floating mb-3">
-                <label>
-                    <input type="text" name="username" class="form-control" placeholder="Username"
-                           th:value="${user.username}">
-                </label>
+                <input type="text" name="username" class="form-control" placeholder="Username"
+                       th:value="${user.username}">
                 <label for="floatingInput">Name</label>
             </div>
             <div class="form-floating mb-3">
-                <label>
-                    <input type="text" name="email" class="form-control" placeholder="Email" th:value="${user.email}">
-                </label>
+                <input type="text" name="email" class="form-control" placeholder="Email" th:value="${user.email}">
                 <label for="floatingInput">Email</label>
             </div>
 
-            <input type="hidden" name="_csrf" value="${_csrf.token}" />
+            <div class="form-floating mb-3">
+                <input type="text" name="role" class="form-control" placeholder="Role" th:value="${user.role}">
+                <label for="floatingInput">Role</label>
+            </div>
+
+            <input name="password" type="hidden" th:value="${user.password}">
+
+            <input type="hidden" name="_csrf" value="${_csrf.token}"/>
 
             <button class="btn btn-primary" type="submit">Update</button>
         </form>

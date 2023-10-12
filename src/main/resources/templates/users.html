@@ -15,21 +15,13 @@
 <body>
 <header th:insert="~{components/header :: header}"></header>
 
-<div class="card" style="width: 18rem;" th:each="paste : ${pastes}">
+<div class="card" style="width: 18rem;" th:each="user : ${users}">
     <div class="card-body">
-        <h5 class="card-title" th:text="${paste.getTitle()}">Title</h5>
-        <p class="card-title mb-2" th:text="${paste.getText()}">Text</p>
-        <p class="card-title mb-2" th:text="${paste.getHash()}">Hash</p>
-        <p class="card-title mb-2" th:text="${user}"></p>
-
-        <div th:if="${user == paste.getAuthor()}">
-            <a th:href="'/pastes/' + ${paste.hash}" class="card-link">More info</a>
-            <a th:href="'/edit_paste/' + ${paste.hash}" class="card-link">Edit</a>
-            <a th:href="'/delete_paste/' + ${paste.hash}" class="card-link">Delete</a>
-        </div>
-        <div th:unless="${user == paste.getAuthor()}">
-            <a th:href="'/pastes/' + ${paste.hash}" class="card-link">More info</a>
-        </div>
+        <h5 class="card-title" th:text="${user.username}">Username</h5>
+        <h5 class="card-title mb-2" th:text="${user.email}">Email</h5>
+        <h5 class="card-title" th:text="${user.roles}">Role</h5>
+        <a th:href="'/edit_user/' + ${user.id}" class="card-link">Edit User</a>
+        <a th:href="'/delete_user/' + ${user.id}" class="card-link">Delete User</a>
     </div>
 </div>
 

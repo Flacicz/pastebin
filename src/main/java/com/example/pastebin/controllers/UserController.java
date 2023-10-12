@@ -45,10 +45,4 @@ public class UserController {
         userService.createUser(userDTO);
         return "redirect:/login";
     }
-
-    @GetMapping("/users")
-    public String getAllUsers(Model model) {
-        model.addAttribute("users", userRepository.findAll());
-        return "users";
-    }
 }

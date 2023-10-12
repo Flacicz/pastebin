@@ -15,13 +15,15 @@
 <body>
 <header th:insert="~{components/header :: header}"></header>
 
-<div class="card" style="width: 18rem;" th:each="el : ${paste}">
+<div class="card" style="width: 18rem;">
     <div class="card-body">
-        <h5 class="card-title" th:text="${el.getTitle()}">Title</h5>
-        <p class="card-title mb-2" th:text="${el.getText()}">Text</p>
+        <h5 class="card-title" th:text="${paste.getTitle()}">Title</h5>
+        <p class="card-title mb-2" th:text="${paste.getText()}">Text</p>
 
-        <a th:href="'/edit_paste/' + ${paste_id}" class="card-link">Редактировать</a>
-        <a th:href="'/delete_paste/' + ${paste_id}" class="card-link">Удалить</a>
+        <div th:if="${user == paste.getAuthor()}">
+            <a th:href="'/edit_paste/' + ${paste.hash}" class="card-link">Edit</a>
+            <a th:href="'/delete_paste/' + ${paste.hash}" class="card-link">Delete</a>
+        </div>
     </div>
 </div>
 

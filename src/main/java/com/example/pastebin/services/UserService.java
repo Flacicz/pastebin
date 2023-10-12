@@ -37,7 +37,7 @@ public class UserService {
                 .username(username)
                 .password(passwordEncoder.encode(userDTO.getPassword()))
                 .email(userDTO.getEmail())
-                .roles(new HashSet<>(Role.ADMIN.ordinal()))
+                .role(Role.USER)
                 .build();
 
         log.info("Saving new User with username : {}", username);
@@ -65,14 +65,11 @@ public class UserService {
     public void editUser(UserDTO userDTO) {
         String username = userDTO.getUsername();
 
-        if (userRepository.findByUsername(username) != null) {
-            throw new RuntimeException("User not found");
-        }
-
         User user = User.builder()
-                .username(userDTO.getUsername())
+                .username(username)
                 .password(passwordEncoder.encode(userDTO.getPassword()))
                 .email(userDTO.getEmail())
+                .role(userDTO.getRole())
                 .build();
 
         userRepository.save(user);
