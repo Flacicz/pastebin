@@ -3,7 +3,7 @@
 
 <head>
     <title>Pastebin</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
@@ -18,26 +18,25 @@
 
 <div class="container">
     <h1>Edit paste</h1>
-    <div th:each="el : ${paste}">
-        <form method="post" th:action="@{/edit_paste/{id}(id=${el.getId()})}" th:object="${paste}">
-            <div class="form-floating mb-3">
-                <input type="text" name="title" class="form-control" placeholder="Title" th:value="${el.title}">
-                <label for="floatingInput">Title</label>
-            </div>
-            <div class="form-floating mb-3">
-                <textarea name="text" class="form-control" placeholder="Text" th:value="${el.text}"></textarea>
-                <label for="floatingInput">Text</label>
-            </div>
+    <form method="post" th:action="@{/edit_paste/{hash}(hash=${pasteDTO.getHash()})}" th:object="${pasteDTO}">
+        <div class="form-floating mb-3">
+            <input type="text" name="title" class="form-control" placeholder="Title" th:value="${pasteDTO.getTitle()}">
+            <label for="floatingInput">Title</label>
+        </div>
+        <div class="form-floating mb-3">
+            <textarea name="text" class="form-control" placeholder="Text" th:value="${pasteDTO.getText()}"></textarea>
+            <label for="floatingInput">Text</label>
+        </div>
 
-            <input name="id" type="hidden" th:value="${el.id}">
-            <input name="author" type="hidden" th:value="${el.author}">
-            <input name="hash" type="hidden" th:value="${el.hash}">
+        <input name="id" type="hidden" th:value="${pasteDTO.getId()}">
+        <input name="author" type="hidden" th:value="${pasteDTO.getAuthor()}">
+        <input name="hash" type="hidden" th:value="${pasteDTO.getHash()}">
+        <input name="views" type="hidden" th:value="${pasteDTO.getViews()}">
 
-            <input type="hidden" name="_csrf" value="${_csrf.token}" />
+        <input type="hidden" name="_csrf" value="${_csrf.token}"/>
 
-            <button class="btn btn-primary" type="submit">Update</button>
-        </form>
-    </div>
+        <button class="btn btn-primary" type="submit">Update</button>
+    </form>
 </div>
 </body>
 

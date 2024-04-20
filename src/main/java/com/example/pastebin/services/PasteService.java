@@ -17,16 +17,11 @@ import org.springframework.util.SerializationUtils;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Slf4j
 public class PasteService {
-    private String oldTitle;
-
     private final Storage storage = StorageOptions.getDefaultInstance().getService();
     private final Bucket bucket = storage.get("pastebin1");
 
@@ -42,21 +37,26 @@ public class PasteService {
         this.hashGenerator = hashGenerator;
     }
 
-    public void saveOldTitle(String title) {
-        oldTitle = title;
-    }
-
+    // helping functions
     public void connectUserToPaste(String username, PasteDetails pasteDetails) {
         User user = userRepository.findByUsername(username);
 
         if (user == null) {
             throw new RuntimeException("User not found");
         } else {
-            pasteDetails.setUser(user);
             user.getPastes().add(pasteDetails);
         }
     }
 
+    public void editPasteInGCC(Paste paste, BlobId blobId) throws IOException {
+        Blob blob = storage.get(blobId);
+
+        WritableByteChannel channel = blob.writer();
+        channel.write(ByteBuffer.wrap(Objects.requireNonNull(SerializationUtils.serialize(paste))));
+        channel.close();
+    }
+
+    // searching functions
     public List<PasteDTO> findAll() {
         List<PasteDTO> pastes = new ArrayList<>();
         Page<Blob> blobs = bucket.list();
@@ -67,42 +67,14 @@ public class PasteService {
             if (SerializationUtils.deserialize(bytes) == null) {
                 throw new IllegalArgumentException("The byte[] must not be null");
             }
+
             pastes.add(pasteMapper.fromPasteToDTO((Paste) SerializationUtils.deserialize(bytes)));
         }
 
         return pastes;
     }
 
-    public void saveText(PasteDTO pasteDTO, String username) {
-        int hash = hashGenerator.generateHashCode();
-
-        Paste paste = Paste.builder()
-                .id(pasteDetailsRepository.count() + 1)
-                .hash(hash)
-                .title(pasteDTO.getTitle())
-                .text(pasteDTO.getText())
-                .author(username)
-                .build();
-
-        BlobId blobId = BlobId.of("pastebin1", paste.getTitle());
-        BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("text/plain").build();
-        Blob blob = storage.create(blobInfo, SerializationUtils.serialize(paste));
-
-        PasteDetails pasteDetails = PasteDetails.builder()
-                .hash(hash)
-                .blobId(blobId)
-                .bucket(blob.getBucket())
-                .build();
-        this.connectUserToPaste(username, pasteDetails);
-
-        pasteDetailsRepository.save(pasteDetails);
-
-        log.info("Saving new bin with title : {},Id1 = {},Id2 = {}", paste.getTitle(), paste.getId(), pasteDetails.getId());
-    }
-
     public PasteDetails findPasteDetailsByHash(int hash) {
-        log.info(String.valueOf(hash));
-
         if (pasteDetailsRepository.findByHash(hash) == null) {
             throw new RuntimeException("Paste not found");
         }
@@ -117,31 +89,93 @@ public class PasteService {
         return pasteDetails;
     }
 
-    public PasteDTO findPasteByHash(int hash) {
+    public PasteDTO findPasteDTOByHash(int hash) {
         Blob blob = storage.get(this.findPasteDetailsByHash(hash).getBlobId());
         return pasteMapper.fromPasteToDTO((Paste) SerializationUtils.deserialize(blob.getContent()));
     }
 
+    public Paste findPasteByHash(int hash) {
+        Blob blob = storage.get(this.findPasteDetailsByHash(hash).getBlobId());
+        return (Paste) SerializationUtils.deserialize(blob.getContent());
+    }
+
+
+    // functions working with pastes
+    public void savePaste(PasteDTO pasteDTO, String username) {
+        int hash = hashGenerator.generateHashCode();
+        String title = pasteDTO.getTitle();
+
+        Paste paste = Paste.builder()
+                .id(pasteDetailsRepository.count() + 1)
+                .hash(hash)
+                .title(title)
+                .text(pasteDTO.getText())
+                .author(username)
+                .views(0)
+                .build();
+
+        BlobId blobId = BlobId.of("pastebin1", title);
+        BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("text/plain").build();
+        Blob blob = storage.create(blobInfo, SerializationUtils.serialize(paste));
+
+        PasteDetails pasteDetails = PasteDetails.builder()
+                .hash(hash)
+                .blobId(blobId)
+                .bucket(blob.getBucket())
+                .build();
+        this.connectUserToPaste(username, pasteDetails);
+
+        pasteDetailsRepository.save(pasteDetails);
+
+        log.info("Saving new bin with title : {},Id1 = {},Id2 = {}", title, paste.getId(), pasteDetails.getId());
+    }
+
+
     public void editPaste(PasteDTO pasteDTO) throws IOException {
-        log.info(String.valueOf(pasteDTO.getHash()));
         Paste paste = pasteMapper.fromDTOToPaste(pasteDTO);
+        BlobId blobId = pasteDetailsRepository.findByHash(pasteDTO.getHash()).getBlobId();
 
-        BlobId blobId = BlobId.of("pastebin1", oldTitle);
-        Blob blob = storage.get(blobId);
-
-        WritableByteChannel channel = blob.writer();
-        channel.write(ByteBuffer.wrap(Objects.requireNonNull(SerializationUtils.serialize(paste))));
-        channel.close();
+        this.editPasteInGCC(paste, blobId);
     }
 
     public void deletePaste(int hash) {
-        PasteDetails pasteDetails = this.findPasteDetailsByHash(hash);
+        PasteDetails pasteDetails = findPasteDetailsByHash(hash);
 
         if (pasteDetails == null) {
             throw new RuntimeException("PasteDetails not found");
         } else {
             storage.delete(pasteDetails.getBlobId());
-            pasteDetailsRepository.deleteById(pasteDetails.getId());
+            pasteDetailsRepository.delete(pasteDetails);
         }
+    }
+
+    public void addView(PasteDTO pasteDTO) throws IOException {
+        Paste paste = pasteMapper.fromDTOToPaste(pasteDTO);
+        paste.setViews(paste.getViews() + 1);
+
+        log.info(pasteDTO.getTitle());
+
+        this.editPasteInGCC(paste, pasteDetailsRepository.findByHash(pasteDTO.getHash()).getBlobId());
+    }
+
+    public void addLike(String username, int hash) {
+        PasteDetails pasteDetails = findPasteDetailsByHash(hash);
+        Set<User> likes = pasteDetails.getLikes();
+        User currUser = userRepository.findByUsername(username);
+
+        if (likes.contains(currUser)) {
+            likes.remove(currUser);
+        } else {
+            likes.add(currUser);
+        }
+
+        pasteDetailsRepository.save(pasteDetails);
+    }
+
+    public boolean meLikedCheck(String username, int hash) {
+        User user = userRepository.findByUsername(username);
+        PasteDetails pasteDetails = findPasteDetailsByHash(hash);
+
+        return pasteDetails.getLikes().contains(user);
     }
 }

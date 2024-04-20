@@ -8,6 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Data
@@ -29,8 +31,13 @@ public class PasteDetails {
     @Column(name = "bucket")
     private String bucket;
 
-    @ManyToOne()
-    private User user;
+    @ManyToMany
+    @JoinTable(
+            name = "paste_likes",
+            joinColumns = {@JoinColumn(name = "paste_id")},
+            inverseJoinColumns = {@JoinColumn(name = "user_id")}
+    )
+    private Set<User> likes = new HashSet<>();
 
     private LocalDateTime dateOfCreated;
 

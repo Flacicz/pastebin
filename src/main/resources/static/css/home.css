@@ -1,0 +1,18 @@
+#exampleFormControlInput1 {
+    width: 25%;
+}
+
+textarea.form-control {
+    width: 50%;
+    height: 350px;
+}
+
+.mb-3 {
+    margin-top: 20px;
+    margin-left: 50px;
+}
+
+#add_paste {
+    margin-left: 50px;
+}
+

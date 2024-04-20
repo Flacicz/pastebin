@@ -15,4 +15,5 @@ public class PasteDetailsDTO {
     private BlobId blobId;
     private String bucket;
     private int hash;
+    private Long likes;
 }

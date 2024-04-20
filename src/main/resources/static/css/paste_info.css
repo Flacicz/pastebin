@@ -1,0 +1,11 @@
+.card {
+    width: 85%;
+    margin: 25px auto 0;
+}
+
+.views {
+    display: flex;
+    flex-direction: row;
+    height: 25px;
+    margin: 5px 0;
+}

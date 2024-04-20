@@ -25,4 +25,6 @@ public class Paste implements Serializable {
     private String author;
 
     private int hash;
+
+    private int views;
 }

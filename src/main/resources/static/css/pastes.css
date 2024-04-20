@@ -1,0 +1,56 @@
+.card {
+    margin: 25px 75px 0;
+}
+
+.card-text {
+    max-width: 75%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.views {
+    display: flex;
+    flex-direction: row;
+    height: 25px;
+    margin: 5px 0;
+}
+
+/*.dop_info {*/
+/*    display: flex;*/
+/*    justify-content: flex-end;*/
+/*}*/
+
+
+/* like */
+
+.like {
+    display: flex;
+    flex-direction: row;
+    height: 25px;
+    margin: 5px 0;
+}
+
+.like-button {
+    margin-right: 15px;
+}
+
+.like-button.animated {
+    -webkit-animation: pop 0.9s both;
+    animation: pop 0.9s both;
+}
+
+.like-button svg {
+    opacity: 1;
+}
+
+.like-button svg path {
+    fill: #333;
+    transition: fill .4s ease-out;
+}
+
+.like-button.active svg path {
+    fill: #2196f3;
+}
+
+

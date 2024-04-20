@@ -15,4 +15,5 @@ public class PasteDTO {
     private String text;
     private String author;
     private int hash;
+    private int views;
 }

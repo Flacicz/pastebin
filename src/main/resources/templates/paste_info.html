@@ -5,6 +5,10 @@
     <title>Pastebin</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="/css/paste_info.css" th:href="@{/css/paste_info.css}"/>
+    <link rel="stylesheet" href="/fontawesome-free-6.5.1-web/css/fontawesome.css"/>
+    <link rel="stylesheet" href="/fontawesome-free-6.5.1-web/css/regular.css"/>
+    <link rel="stylesheet" href="/fontawesome-free-6.5.1-web/css/solid.css"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
@@ -15,15 +19,49 @@
 <body>
 <header th:insert="~{components/header :: header}"></header>
 
-<div class="card" style="width: 18rem;">
+<!--<div class="card" style="width: 18rem;">-->
+<!--    <div class="card-body">-->
+<!--        <h5 class="card-title" th:text="${paste.getTitle()}">Title</h5>-->
+<!--        <p class="card-title mb-2" th:text="${paste.getText()}">Text</p>-->
+
+<!--        <div class="views" >-->
+<!--            <h6 style="margin-right: 5px">Views: </h6>-->
+<!--            <h6 class="views_count" th:text="${paste.getViews()}">Views</h6>-->
+<!--        </div>-->
+
+<!--        <div class="like">-->
+<!--            <a th:href="'/pastes/' + ${paste.hash} + '/like'" class="like-button" >-->
+<!--                <i th:unless="${meLiked == true}" class="fa-regular fa-heart"></i>-->
+<!--                <i th:if="${meLiked == true}" class="fa-solid fa-heart"></i>-->
+<!--            </a>-->
+
+<!--            <p class="likes_count" th:text="${likes}">Likes</p>-->
+<!--        </div>-->
+
+<!--        <div th:if="${user == paste.getAuthor()}">-->
+<!--            <a th:href="'/edit_paste/' + ${paste.hash}" class="card-link">Edit</a>-->
+<!--            <a th:href="'/delete_paste/' + ${paste.hash}" class="card-link">Delete</a>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+
+<!---->
+
+<div class="card text-center">
+    <div class="card-header">
+        Featured
+    </div>
     <div class="card-body">
-        <h5 class="card-title" th:text="${paste.getTitle()}">Title</h5>
-        <p class="card-title mb-2" th:text="${paste.getText()}">Text</p>
+        <h5 class="card-title" th:text="${paste.getTitle()}">Special title treatment</h5>
+        <p class="card-text" th:text="${paste.getText()}">With supporting text below as a natural lead-in to additional content.</p>
 
         <div th:if="${user == paste.getAuthor()}">
-            <a th:href="'/edit_paste/' + ${paste.hash}" class="card-link">Edit</a>
-            <a th:href="'/delete_paste/' + ${paste.hash}" class="card-link">Delete</a>
+            <a th:href="'/edit_paste/' + ${paste.hash}" class="btn btn-primary">Edit</a>
+            <a th:href="'/delete_paste/' + ${paste.hash}" class="btn btn-primary">Delete</a>
         </div>
+    </div>
+    <div class="card-footer text-body-secondary" th:text="${date_of_created}">
+        2 days ago
     </div>
 </div>
 
